@@ -23,7 +23,7 @@ $(BINDIR)/uninstall.sh: setup/uninstall.sh ,,bindir
 
 installer_scripts/postinstall: $(BINDIR)/setup.sh
 	mkdir -p installer_scripts
-	(cd installer_scripts ; ln -sf /opt/AltCa/bin/setup.sh postinstall)
+	ln $(BINDIR)/setup.sh installer_scripts/postinstall
 
 altca-signed.pkg: altca.pkg
 	productsign --sign $(CERT) $< $@
