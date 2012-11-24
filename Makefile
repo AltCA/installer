@@ -29,4 +29,4 @@ altca-signed.pkg: altca.pkg
 	productsign --sign $(CERT) $< $@
 
 clean:
-	rm -rvf altca-signed.pkg altca.pkg $(BINDIR) setup
+	rm -rvf altca-signed.pkg altca.pkg build setup installer_scripts
