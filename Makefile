@@ -35,3 +35,4 @@ clean:
 
 ,,publish: ,,bump-version altca-signed.pkg
 	cp -v altca-signed.pkg ../www/AltCa.pkg
+	(cd ../www && xcrun git add AltCA.pkg && xcrun git commit -m "new installer package" && xcrun git push)
