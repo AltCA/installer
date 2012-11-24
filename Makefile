@@ -1,10 +1,9 @@
 
 BINDIR = build/opt/AltCa/bin
 CERT = FC56A9E21F6E59720EBE892B8119994B024C8FEB
-
 altca.pkg: $(BINDIR)/setup.sh $(BINDIR)/uninstall.sh installer_scripts/postinstall
 	pkgbuild --root build --identifier org.altca.installer \
-	--version 0.1 --install-location / \
+	--version 0.$(shell cat VERSION) --install-location / \
 	--scripts installer_scripts \
 	$@
 
@@ -29,4 +28,10 @@ altca-signed.pkg: altca.pkg
 	productsign --sign $(CERT) $< $@
 
 clean:
-	rm -rvf altca-signed.pkg altca.pkg build setup installer_scripts
+	xcrun git clean -fxd
+
+,,bump-version:
+	echo $(shell expr `cat VERSION` + 1 ) > VERSION
+
+,,publish: ,,bump-version altca-signed.pkg
+	cp -v altca-signed.pkg ../www/AltCa.pkg
