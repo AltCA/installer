@@ -24,7 +24,22 @@ installer_scripts/postinstall: $(BINDIR)/setup.sh
 	mkdir -p installer_scripts
 	ln $(BINDIR)/setup.sh installer_scripts/postinstall
 
-altca-signed.pkg: altca.pkg
+distribution-template.xml: altca.pkg
+	productbuild --synthesize --package altca.pkg $@
+
+# requires xmlstarlet
+distribution.xml: distribution-template.xml
+	xml ed -i '//installer-gui-script/pkg-ref[1]' -t elem -n title -v "AltCA.org root certificates" < $< | \
+	xml ed -i //installer-gui-script/title -t elem -n background -v '' | \
+	xml ed -i //installer-gui-script/background -t attr -n file -v ./background.png | \
+	xml ed -i //installer-gui-script/background -t attr -n scaling -v proportional | \
+	xml ed -i //installer-gui-script/background -t attr -n alignment -v bottomleft \
+	> $@
+
+altca-distribution.pkg: altca.pkg distribution.xml resources/background.png
+	productbuild --distribution distribution.xml --resources resources $@
+
+altca-signed.pkg: altca-distribution.pkg
 	productsign --sign $(CERT) $< $@
 
 clean:
