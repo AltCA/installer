@@ -9,6 +9,7 @@ altca.pkg: $(BINDIR)/setup.sh $(BINDIR)/uninstall.sh installer_scripts/postinsta
 
 setup/.git/HEAD:
 	xcrun git clone git://github.com/AltCA/setup.git
+
 setup/setup.sh: setup/.git/HEAD
 
 ,,bindir:
