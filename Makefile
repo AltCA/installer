@@ -1,6 +1,10 @@
 
 BINDIR = build/opt/AltCa/bin
 CERT = FC56A9E21F6E59720EBE892B8119994B024C8FEB
+
+altca-distribution.pkg: altca.pkg distribution.xml resources/background.pdf
+	productbuild --distribution distribution.xml --resources resources $@
+
 altca.pkg: $(BINDIR)/setup.sh $(BINDIR)/uninstall.sh installer_scripts/postinstall
 	pkgbuild --root build --identifier org.altca.installer \
 	--version 0.$(shell cat VERSION) --install-location / \
@@ -32,13 +36,11 @@ distribution-template.xml: altca.pkg
 distribution.xml: distribution-template.xml
 	xml ed -i '//installer-gui-script/pkg-ref[1]' -t elem -n title -v "AltCA.org root certificates" < $< | \
 	xml ed -i //installer-gui-script/title -t elem -n background -v '' | \
-	xml ed -i //installer-gui-script/background -t attr -n file -v ./background.png | \
+	xml ed -i //installer-gui-script/background -t attr -n file -v ./background.pdf | \
 	xml ed -i //installer-gui-script/background -t attr -n scaling -v proportional | \
-	xml ed -i //installer-gui-script/background -t attr -n alignment -v bottomleft \
+	xml ed -i //installer-gui-script/background -t attr -n alignment -v bottomleft | \
+	xml ed -i //installer-gui-script/background -t attr -n mime-type -v application/pdf \
 	> $@
-
-altca-distribution.pkg: altca.pkg distribution.xml resources/background.png
-	productbuild --distribution distribution.xml --resources resources $@
 
 altca-signed.pkg: altca-distribution.pkg
 	productsign --sign $(CERT) $< $@
